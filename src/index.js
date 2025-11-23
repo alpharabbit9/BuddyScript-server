@@ -5,6 +5,7 @@ dotenv.config();
 import authRoutes from '../src/routes/auth.route.js'
 import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
+import postRoutes from '../src/routes/posts.route.js'
 
 
 
@@ -23,6 +24,7 @@ app.use(cookieParser())
 // route calls
 
 app.use('/api/auth', authRoutes)
+app.use("/api/posts", postRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
