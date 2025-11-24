@@ -1,6 +1,6 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { createPost, getAllPosts } from "../controllers/posts.controller.js";
+import { createPost, getAllPosts, toggleLikePost } from "../controllers/posts.controller.js";
 
 
 const router = express.Router();
@@ -10,5 +10,7 @@ router.post("/createPost", protectRoute, createPost);
 
 // Get all posts (sorted by newest first)
 router.get("/getAllPost", protectRoute, getAllPosts);
+
+router.patch("/:id/like", toggleLikePost);
 
 export default router;

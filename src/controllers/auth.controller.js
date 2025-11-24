@@ -5,28 +5,27 @@ import { generateToken } from "../lib/utils.js";
 
 export const signUp = async (req, res) => {
 
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, profilePic } = req.body;
 
     try {
-
         if (!fullName || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" })
+            return res.status(400).json({ message: "All fields are required" });
         }
 
         if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters long" })
+            return res.status(400).json({ message: "Password must be at least 6 characters long" });
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: "Invalid email format" })
+            return res.status(400).json({ message: "Invalid email format" });
         }
 
-        const user = await User.findOne({email});
+        const userExists = await User.findOne({ email });
 
-        if (user) {
-            return res.status(400).json({ message: "User already exists" })
+        if (userExists) {
+            return res.status(400).json({ message: "User already exists" });
         }
 
         const salt = await bcryptjs.genSalt(10);
@@ -35,40 +34,29 @@ export const signUp = async (req, res) => {
         const newUser = new User({
             fullName,
             email,
-            password: hashedPassword
-        })
+            password: hashedPassword,
+            profilePic: profilePic || ""      // <-- save IMGBB URL here
+        });
 
+        await newUser.save();
 
-        if (newUser) {
+        generateToken(newUser._id, res);
 
-            generateToken(newUser._id, res)
-            await newUser.save()
-
-            res.status(201).json({
-                _id: newUser._id,
-                fullName: newUser.fullName,
-                email: newUser.email,
-                createdAt: newUser.createdAt,
-                updatedAt: newUser.updatedAt
-            })
-
-        }
-
-        else {
-
-            return res.status(400).json({ message: "Invalid user data" })
-
-        }
-
+        res.status(201).json({
+            _id: newUser._id,
+            fullName: newUser.fullName,
+            email: newUser.email,
+            profilePic: newUser.profilePic,   // <-- return profilePic
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt
+        });
 
     } catch (error) {
-
-
-        console.log('Error in signUp controller:', error);
+        console.log("Error in signUp controller:", error);
         res.status(500).json({ message: "Server error" });
-
     }
-}
+};
+
 
 
 export const login = async (req, res) => {

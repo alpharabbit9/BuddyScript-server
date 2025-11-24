@@ -4,8 +4,14 @@ const postSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",       // Reference to the user who posted
+      ref: "User",
       required: true,
+    },
+
+    userFullName: {
+      type: String,
+      required: true,  
+      trim: true,
     },
 
     text: {
@@ -15,7 +21,7 @@ const postSchema = new mongoose.Schema(
     },
 
     images: {
-      type: [String],     // Array of image URLs from ImgBB
+      type: [String],
       default: [],
     },
 

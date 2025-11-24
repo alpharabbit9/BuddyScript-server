@@ -6,7 +6,8 @@ import authRoutes from '../src/routes/auth.route.js'
 import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
 import postRoutes from '../src/routes/posts.route.js'
-
+import likeRoutes from '../src/routes/like.route.js'
+import commentRoutes from '../src/routes/comment.route.js'
 
 
 const app = express();
@@ -25,6 +26,8 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 app.use("/api/posts", postRoutes);
+app.use("/api/likes",likeRoutes)
+app.use('/api/comments',commentRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

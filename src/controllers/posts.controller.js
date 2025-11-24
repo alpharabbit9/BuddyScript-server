@@ -14,8 +14,10 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ message: "Post cannot be empty." });
     }
 
+    // req.user comes from auth middleware
     const newPost = await Post.create({
       user: req.user._id,
+      userFullName: req.user.fullName,   
       text,
       images,
     });
@@ -30,6 +32,7 @@ export const createPost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // ===============================
 // GET ALL POSTS (Newest First)
@@ -51,3 +54,44 @@ export const getAllPosts = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const toggleLikePost = async (req, res) => {
+    try {
+        const { id } = req.params;     // postId
+        const { userId } = req.body;   // liker userId
+
+        const post = await Post.findById(id);
+
+        if (!post) {
+            return res.status(404).json({ success: false, message: "Post not found" });
+        }
+
+        const alreadyLiked = post.likes.some(
+            (uid) => uid.toString() === userId.toString()
+        );
+
+        if (alreadyLiked) {
+            // UNLIKE
+            post.likes = post.likes.filter(
+                (uid) => uid.toString() !== userId.toString()
+            );
+        } else {
+            // LIKE
+            post.likes.push(userId);
+        }
+
+        await post.save();
+
+        return res.status(200).json({
+            success: true,
+            message: alreadyLiked ? "Post unliked" : "Post liked",
+            likes: post.likes.map((u) => u.toString()) // ensure frontend gets strings
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
