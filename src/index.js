@@ -2,12 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
-import authRoutes from '../src/routes/auth.route.js'
+import authRoutes from './routes/auth.route.js'
 import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
-import postRoutes from '../src/routes/posts.route.js'
-import likeRoutes from '../src/routes/like.route.js'
-import commentRoutes from '../src/routes/comment.route.js'
+import postRoutes from './routes/posts.route.js'
+import likeRoutes from './routes/like.route.js'
+import commentRoutes from './routes/comment.route.js'
 
 
 const app = express();
